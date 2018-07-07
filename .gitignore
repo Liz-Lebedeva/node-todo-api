@@ -1,0 +1,9 @@
+
+# servive files
+node_modules/
+
+# PhpStorm
+.idea/
+
+# other
+playground/
