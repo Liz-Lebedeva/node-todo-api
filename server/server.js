@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
@@ -16,9 +17,10 @@ app.post('/todos', (req, res) => {
     const todo = new ToDo({
         text: req.body.text
     });
+
     todo.save().then( (todo) => {
         res.send(todo);
-    }, (e) => {
+    }).catch( (e) => {
         res.status(400).send(e);
     });
 
@@ -27,10 +29,9 @@ app.post('/todos', (req, res) => {
 app.get('/todos', (req, res) => {
 
    ToDo.find().then( (todos) => {
-       // respond with an object that contains array of results
-       // to be able to add another properties to the response
+       // respond with an object that contains array of results to be able to add another properties to the response
        res.send({todos});
-   }, (e) => {
+   }).catch( (e) => {
        res.status(400).send(e);
    });
 
@@ -45,13 +46,38 @@ app.get('/todos/:id', (req, res) => {
     }
 
     ToDo.findById(id).then ( (todo) => {
-
         if (!todo) {
             return res.status(404).send({message: 'ID not found'});
         }
         res.send({todo});
+    }).catch( (e) => {
+        res.status(400).send({message: 'Unknown error'});
+    });
 
-    }, (e) => {
+});
+
+app.patch('/todos/:id', (req, res) => {
+
+    const id = req.params.id;
+    const body = _.pick(req.body, ['text', 'completed']);
+
+    if ( !ObjectID.isValid(id) ) {
+        return res.status(400).send({message: 'ID is not valid'});
+    }
+
+    if (_.isBoolean(body.completed) && body.completed) {
+        body.completedAt = new Date().getTime();
+    } else {
+        body.completed = false;
+        body.completedAt = null;
+    }
+
+    ToDo.findByIdAndUpdate(id, {$set: body}, {new: true}).then( (todo) => {
+        if (!todo) {
+            return res.status(404).send({message: 'ID not found'});
+        }
+        res.send({todo});
+    }).catch( (e) => {
         res.status(400).send({message: 'Unknown error'});
     });
 
@@ -66,13 +92,11 @@ app.delete('/todos/:id', (req, res) => {
     }
 
     ToDo.findByIdAndDelete(id).then ( (todo) => {
-
         if (!todo) {
             return res.status(404).send({message: 'ID not found'});
         }
         res.send({todo});
-
-    }, (e) => {
+    }).catch( (e) => {
         res.status(400).send({message: 'Unknown error'});
     });
 
