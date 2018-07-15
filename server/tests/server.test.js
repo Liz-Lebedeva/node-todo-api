@@ -1,8 +1,6 @@
 const request = require('supertest');
 const {ObjectID} = require('mongodb');
 
-const chai = require('chai');
-chai.should();
 const expect = require('chai').expect;
 
 const {app} = require('./../server');
