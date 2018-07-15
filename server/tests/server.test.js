@@ -1,4 +1,6 @@
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
+
 const chai = require('chai');
 chai.should();
 
@@ -8,10 +10,13 @@ const {ToDo} = require('./../models/todo');
 /** Test data to restore DB content before each test */
 
 const todosInitial = [{
+    _id: new ObjectID(),
     text: 'First dummy todo'
 }, {
+    _id: new ObjectID(),
     text: 'Second dummy todo'
 }, {
+    _id: new ObjectID(),
     text: 'Third dummy todo'
 }];
 
@@ -39,7 +44,6 @@ describe('POST /todos', () => {
                 if (err) {
                     return done(err);
                 }
-
                 // Check that the record with test data was added to the DB (and only one)
                 ToDo.find({text}).then( (result) => {
                     result.length.should.equal(1);
@@ -76,7 +80,6 @@ describe('POST /todos', () => {
 
             });
     });
-
 });
 
 describe('GET /todos', () => {
@@ -84,14 +87,62 @@ describe('GET /todos', () => {
     it('should return all todos', (done) => {
         request(app)
             .get('/todos')
+            // Check API's response
             .expect(200)
             .expect( (res) => {
-                // Check that DB contains inital data from beforeEach block
+                // Check that DB contains initial data from beforeEach block
                 res.body.todos.length.should.equal(todosInitial.length);
                 res.body.todos.map(a => a.text).should.deep.equal(todosInitial.map(a => a.text));
             })
             .end(done);
-    })
-
-
+    });
 });
+
+describe('GET /todos/:id', () => {
+
+    it('should find todo by its id and return it', (done) => {
+        // Define test data
+        const id = todosInitial[1]._id;  //.toHexString()
+
+        request(app)
+            .get(`/todos/${id}`)
+            // Check API's response
+            .expect(200)
+            .expect( (res) => {
+                // Check that returned record matches the one in initial data from beforeEach block
+                res.body.todo.text.should.equal(todosInitial[1].text);
+            })
+            .end(done);
+    });
+
+    it('should return error message if there is no record with this id', (done) => {
+        // Define test data
+        const id = new ObjectID();  //.toHexString()
+
+        request(app)
+            .get(`/todos/${id}`)
+            // Check API's response
+            .expect(404)
+            .expect( (res) => {
+                // Check error message
+                res.body.message.should.equal('ID not found');
+            })
+            .end(done);
+    });
+
+    it('should return error message if id is invalid', (done) => {
+        // Define test data
+        const id = 12345;
+
+        request(app)
+            .get(`/todos/${id}`)
+            // Check API's response
+            .expect(400)
+            .expect( (res) => {
+                // Check error message
+                res.body.message.should.equal('ID is not valid');
+            })
+            .end(done);
+    });
+});
+
