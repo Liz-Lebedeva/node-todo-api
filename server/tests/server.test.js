@@ -102,7 +102,7 @@ describe('GET /todos/:id', () => {
 
     it('should find todo by its id and return it', (done) => {
         // Define test data
-        const id = todosInitial[1]._id;  //.toHexString()
+        const id = todosInitial[1]._id.toHexString();
 
         request(app)
             .get(`/todos/${id}`)
@@ -110,14 +110,15 @@ describe('GET /todos/:id', () => {
             .expect(200)
             .expect( (res) => {
                 // Check that returned record matches the one in initial data from beforeEach block
-                res.body.todo.text.should.equal(todosInitial[1].text);
+                res.body.todo._id.should.equal(id);
+                res.body.todo.text.should.equal(todosInitial[1].text); // optional
             })
             .end(done);
     });
 
-    it('should return error message if there is no record with this id', (done) => {
+    it('should return error message if todo not found by id', (done) => {
         // Define test data
-        const id = new ObjectID();  //.toHexString()
+        const id = new ObjectID().toHexString();
 
         request(app)
             .get(`/todos/${id}`)
@@ -146,3 +147,62 @@ describe('GET /todos/:id', () => {
     });
 });
 
+describe('DELETE /todos/:id', () => {
+
+    it('should delete a todo by its id', (done) =>{
+        // Define test data
+        const id = todosInitial[1]._id.toHexString();
+
+        request(app)
+            .delete(`/todos/${id}`)
+            // Check API's response
+            .expect(200)
+            .expect( (res) => {
+                // Check that returned record matches the one in initial data from beforeEach block
+                res.body.todo._id.should.equal(id);
+                res.body.todo.text.should.equal(todosInitial[1].text); // optional
+            })
+            .end( (err, res) => {
+                if (err) {
+                    return done(err);
+                }
+                // Check that the record with test data was deleted from the DB (and only it)
+                ToDo.find().then( (todos) => {
+                    todos.length.should.equal(todosInitial.length - 1);
+                    todos.map(a => a._id).should.not.include({_id : id});
+                    done();
+                }).catch( (e) => done(e) );
+            });
+    });
+
+    it('should return error message if todo not found by id', (done) => {
+        // Define test data
+        const id = new ObjectID().toHexString();
+
+        request(app)
+            .delete(`/todos/${id}`)
+            // Check API's response
+            .expect(404)
+            .expect( (res) => {
+                // Check error message
+                res.body.message.should.equal('ID not found');
+            })
+            .end(done);
+    });
+
+    it('should return error message if id is invalid', (done) => {
+        // Define test data
+        const id = 12345;
+
+        request(app)
+            .delete(`/todos/${id}`)
+            // Check API's response
+            .expect(400)
+            .expect( (res) => {
+                // Check error message
+                res.body.message.should.equal('ID is not valid');
+            })
+            .end(done);
+
+    });
+});
