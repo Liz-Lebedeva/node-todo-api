@@ -14,14 +14,37 @@ const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
+
+/** USERS routes */
+
+app.post('/users', (req, res) => {
+
+    const body = _.pick(req.body, ['email', 'password']); // todo: add other keys when they will be used
+    const user = new User(body);
+
+    user.save()
+        .then( () => {
+            return user.generateAuthToken();
+        })
+        .then( (token) => {
+            res.header('x-auth', token).send(user);
+        })
+        .catch( (e) => {
+            res.status(400).send(e);
+        });
+
+});
+
+
+/** RECORDS routes */
+
 app.post('/todos', (req, res) => {
 
-    const todo = new ToDo({
-        text: req.body.text
-    });
+    const body = _.pick(req.body, ['text']);
+    const todo = new ToDo(body);
 
     todo.save().then( (todo) => {
-        res.send(todo);
+        res.send({todo});
     }).catch( (e) => {
         res.status(400).send(e);
     });

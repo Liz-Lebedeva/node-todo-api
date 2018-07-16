@@ -1,5 +1,5 @@
 const env = process.env.NODE_ENV || 'development';
-console.log('env ****', env);
+console.log('env ****', env); // todo: remove this later
 
 if (env === 'development') {
     process.env.PORT = 3000;

@@ -40,7 +40,7 @@ describe('POST /todos', () => {
             // Check API's response
             .expect( (res) => {
                 // Check that returned record matches the one in initial data from beforeEach block
-                expect(res.body.text).to.equal(text);
+                expect(res.body.todo.text).to.equal(text);
             })
             .end( (err, res) => {
                 if (err) {
