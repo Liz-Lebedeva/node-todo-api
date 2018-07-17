@@ -62,9 +62,29 @@ UserSchema.methods.generateAuthToken = function() {
     const token = jwt.sign({_id: user._id.toHexString(), access}, 'abc1234').toString(); // todo: move value to config file
 
     user.tokens = user.tokens.concat( [{access, token}] );
-    user.save().then( () => {
+    return user.save().then( () => {
         return token;
     });
+};
+
+UserSchema.statics.findByToken = function(token) {
+
+    let User = this;
+    let decoded;
+
+    try {
+        decoded = jwt.verify(token, 'abc1234'); // todo: move value to config file
+    } catch(e) {
+        return Promise.reject({message: 'Unknown authentication error'});
+    }
+
+    return User.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    });
+
+
 };
 
 const User = mongoose.model('User', UserSchema, 'Users');
