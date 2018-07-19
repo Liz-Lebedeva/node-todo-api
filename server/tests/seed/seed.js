@@ -22,7 +22,7 @@ const todosInitial = [{
 const populateToDos = (done) => {
     ToDo.remove({}).then( () => {
         return ToDo.insertMany(todosInitial);
-    }).then( () => done() );
+    }).then( () => done() ).catch( (e) => done(e) );
 };
 
 
@@ -53,7 +53,7 @@ const populateUsers = (done) => {
         const userTwo = new User(usersInitial[1]).save();
 
         return Promise.all([userOne, userTwo]);
-    }).then( () => done() );
+    }).then( () => done() ).catch( (e) => done(e) );
 };
 
 module.exports = {todosInitial, populateToDos, usersInitial, populateUsers};

@@ -2,10 +2,11 @@ require('./config/config');
 
 const _ = require('lodash');
 const express = require('express');
+
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 
-const {mongoose} = require('./db/mongoose');
+const mongoose = require('./db/mongoose');
 const {authenticate} = require('./middleware/authenticate');
 const {ToDo} = require('./models/todo');
 const {User} = require('./models/user');
@@ -33,6 +34,22 @@ app.post('/users', (req, res) => {
         .catch( (e) => {
             res.status(400).send(e);
         });
+
+});
+
+app.post('/users/login', (req, res) => {
+
+    const body = _.pick(req.body, ['email', 'password']); // todo: add other keys when they will be used
+    //const user = new User(body);
+
+    User.findByCredentials(body.email, body.password).then( (user) => {
+        return user.generateAuthToken().then( (token) => {
+            res.header('x-auth', token).send(user);
+        });
+
+    }).catch( (e) => {
+        res.status(400).send(e);
+    });
 
 });
 

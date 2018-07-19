@@ -93,6 +93,88 @@ describe('POST /users', () => {
 
 });
 
+describe('POST /users/login', () => {
+
+    it('should login user with valid credentials and return auth token', (done) => {
+        // Define test data
+        const email = usersInitial[1].email;
+        const password = usersInitial[1].password;
+        const id = usersInitial[1]._id;
+
+        request(app)
+            .post('/users/login')
+            .send({email, password})
+            // Check API's response
+            .expect(200)
+            .expect( (res) => {
+                expect(res.headers['x-auth']).to.exist;
+                expect(res.body._id).to.equal(id.toHexString());
+                expect(res.body.email).to.equal(email);
+            })
+            .end( (err, res) => {
+                if (err) {
+                    return done (err);
+                }
+                // Check that user in the DB has new tokens
+                User.findById(id).then( (user) => {
+                    expect(user.tokens[0]).includes({
+                        access: 'auth',
+                        token: res.headers['x-auth']
+                    });
+                    done();
+                }).catch( (e) => done(e) );
+            });
+    });
+
+    it('should return reject invalid credentials', (done) => {
+
+        // Define test data
+        const email = 'not.used.email@gmail.com';
+        const password = usersInitial[1].password;
+        const id = usersInitial[1]._id;
+
+        request(app)
+            .post('/users/login')
+            .send({email, password})
+            // Check API's response
+            .expect(400)
+            .expect( (res) => {
+                expect(res.headers['x-auth']).to.not.exist;
+                expect(res.body.message).to.include('User not found');
+            })
+            .end(done);
+    });
+
+    it('should return reject invalid password', (done) => {
+
+        // Define test data
+        const email = usersInitial[1].email;
+        const password = '12345';
+        const id = usersInitial[1]._id;
+
+        request(app)
+            .post('/users/login')
+            .send({email, password})
+            // Check API's response
+            .expect(400)
+            .expect( (res) => {
+                expect(res.headers['x-auth']).to.not.exist;
+                expect(res.body.message).to.include('error');
+            })
+            .end( (err, res) => {
+                if (err) {
+                    return done (err);
+                }
+                // Check that user in the DB still has no tokens
+                User.findById(id).then( (user) => {
+                    expect(user.tokens.length).to.equal(0);
+                    done();
+                }).catch( (e) => done(e) );
+            });
+    });
+
+});
+
 describe('GET /users/me', () => {
 
     it('should return user if authenticated', (done) => {
