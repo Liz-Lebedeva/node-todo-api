@@ -5,27 +5,13 @@ const expect = require('chai').expect;
 
 const {app} = require('./../server');
 const {ToDo} = require('./../models/todo');
+const {todosInitial, populateToDos} = require('./seed/seed');
 
 /** Test data to restore DB content before each test */
 
-const todosInitial = [{
-    _id: new ObjectID(),
-    text: 'First dummy todo'
-}, {
-    _id: new ObjectID(),
-    text: 'Second dummy todo',
-    completed: true,
-    completedAt: 1531642808200
-}, {
-    _id: new ObjectID(),
-    text: 'Third dummy todo'
-}];
+beforeEach(populateToDos);
 
-beforeEach( (done) => {
-    ToDo.remove({}).then( () => {
-        return ToDo.insertMany(todosInitial);
-    }).then( () => done() );
-});
+/** Tests */
 
 describe('POST /todos', () => {
 
@@ -36,8 +22,8 @@ describe('POST /todos', () => {
         request(app)
             .post('/todos')
             .send({text})
-            .expect(200)
             // Check API's response
+            .expect(200)
             .expect( (res) => {
                 // Check that returned record matches the one in initial data from beforeEach block
                 expect(res.body.todo.text).to.equal(text);
@@ -118,7 +104,7 @@ describe('GET /todos/:id', () => {
             .end(done);
     });
 
-    it('should return error message if todo not found by id', (done) => {
+    it('should return 404 error if todo not found by id', (done) => {
         // Define test data
         const id = new ObjectID().toHexString();
 
@@ -133,7 +119,7 @@ describe('GET /todos/:id', () => {
             .end(done);
     });
 
-    it('should return error message if id is invalid', (done) => {
+    it('should return 400 error if id is invalid', (done) => {
         // Define test data
         const id = 12345;
 
@@ -246,7 +232,7 @@ describe('PATCH /todos/:id', () => {
             });
     });
 
-    it('should return error message if todo not found by id', (done) => {
+    it('should return 404 error if todo not found by id', (done) => {
         // Define test data
         const id = new ObjectID().toHexString();
         const body = {completed: true};
@@ -263,7 +249,7 @@ describe('PATCH /todos/:id', () => {
             .end(done);
     });
 
-    it('should return error message if id is invalid', (done) => {
+    it('should return 400 error if id is invalid', (done) => {
         // Define test data
         const id = 12345;
         const body = {completed: true};
