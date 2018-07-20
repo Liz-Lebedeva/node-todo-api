@@ -127,7 +127,6 @@ describe('POST /users/login', () => {
     });
 
     it('should return reject invalid credentials', (done) => {
-
         // Define test data
         const email = 'not.used.email@gmail.com';
         const password = usersInitial[1].password;
@@ -146,7 +145,6 @@ describe('POST /users/login', () => {
     });
 
     it('should return reject invalid password', (done) => {
-
         // Define test data
         const email = usersInitial[1].email;
         const password = '12345';
@@ -178,28 +176,62 @@ describe('POST /users/login', () => {
 describe('GET /users/me', () => {
 
     it('should return user if authenticated', (done) => {
+        // Define test data
+        const token = usersInitial[0].tokens[0].token;
+        const id = usersInitial[0]._id;
+        const email = usersInitial[0].email;
+
         request(app)
             .get('/users/me')
-            .set('x-auth', usersInitial[0].tokens[0].token)
+            .set('x-auth', token)
             // Check API's response
             .expect(200)
             .expect( (res) => {
-                expect(res.body._id).to.equal(usersInitial[0]._id.toHexString());
-                expect(res.body.email).to.equal(usersInitial[0].email);
+                expect(res.body._id).to.equal(id.toHexString());
+                expect(res.body.email).to.equal(email);
             })
             .end(done);
     });
 
     it('should return 401 error if not authenticated', (done) => {
+        // Define test data
+        const token = '';
+
         request(app)
             .get('/users/me')
-            .set('x-auth', '')
+            .set('x-auth', token)
             // Check API's response
             .expect(401)
             .expect( (res) => {
                 expect(res.body.message).to.equal('Unknown authentication error');
             })
             .end(done);
+    });
+
+});
+
+describe('DELETE /users/me/token', () => {
+
+    it('should delete auth token on logout if authenticated', (done) => {
+        // Define test data
+        const token = usersInitial[0].tokens[0].token;
+        const id = usersInitial[0]._id;
+
+        request(app)
+            .delete('/users/me/token')
+            .set('x-auth', token)
+            // Check API's response
+            .expect(200)
+            .end( (err, res) => {
+                if (err) {
+                    return done (err);
+                }
+                // Check that user in the DB has no tokens
+                User.findById(id).then( (user) => {
+                    expect(user.tokens.length).to.equal(0);
+                    done();
+                }).catch( (e) => done(e) );
+            });
     });
 
 });
