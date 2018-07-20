@@ -4,27 +4,6 @@ const jwt = require('jsonwebtoken');
 const {ToDo} = require('./../../models/todo');
 const {User} = require('./../../models/user');
 
-/** Todos */
-
-const todosInitial = [{
-    _id: new ObjectID(),
-    text: 'First dummy todo',
-}, {
-    _id: new ObjectID(),
-    text: 'Second dummy todo',
-    completed: true,
-    completedAt: 1531642808200,
-}, {
-    _id: new ObjectID(),
-    text: 'Third dummy todo',
-}];
-
-const populateToDos = (done) => {
-    ToDo.remove({}).then( () => {
-        return ToDo.insertMany(todosInitial);
-    }).then( () => done() ).catch( (e) => done(e) );
-};
-
 
 /** Users */
 
@@ -55,5 +34,32 @@ const populateUsers = (done) => {
         return Promise.all([userOne, userTwo]);
     }).then( () => done() ).catch( (e) => done(e) );
 };
+
+
+/** Records */
+
+const todosInitial = [{
+    _id: new ObjectID(),
+    text: 'First dummy todo',
+    _creator: userOneId,
+}, {
+    _id: new ObjectID(),
+    text: 'Second dummy todo',
+    completed: true,
+    completedAt: 1531642808200,
+    _creator: userOneId,
+}, {
+    _id: new ObjectID(),
+    text: 'Third dummy todo',
+    _creator: userTwoId,
+}];
+
+const populateToDos = (done) => {
+    ToDo.remove({}).then( () => {
+        return ToDo.insertMany(todosInitial);
+    }).then( () => done() ).catch( (e) => done(e) );
+};
+
+
 
 module.exports = {todosInitial, populateToDos, usersInitial, populateUsers};
