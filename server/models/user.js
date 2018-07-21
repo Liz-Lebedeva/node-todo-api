@@ -60,8 +60,7 @@ UserSchema.methods.generateAuthToken = function() {
     let user = this;
 
     const access = 'auth';
-    const token = jwt.sign({_id: user._id.toHexString(), access}, 'abc1234').toString();
-    // todo: move value to config file
+    const token = jwt.sign({_id: user._id.toHexString(), access}, process.env.JWT_SECRET).toString();
 
     user.tokens = user.tokens.concat( [{access, token}] );
     return user.save().then( () => {
@@ -84,7 +83,7 @@ UserSchema.statics.findByToken = function(token) {
     let decoded;
 
     try {
-        decoded = jwt.verify(token, 'abc1234'); // todo: move value to config file
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
     } catch(e) {
         return Promise.reject({message: 'Unknown authentication error'});
     }

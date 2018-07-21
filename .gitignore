@@ -1,6 +1,7 @@
 
 # servive files
 node_modules/
+server/config/config.json
 
 # PhpStorm
 .idea/

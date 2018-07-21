@@ -16,8 +16,7 @@ const usersInitial = [{
     password: 'userOnePass',
     tokens: [{
         access: 'auth',
-        token: jwt.sign({_id: userOneId, access: 'auth'}, 'abc1234').toString(),
-        // todo: move value to config file
+        token: jwt.sign({_id: userOneId, access: 'auth'}, process.env.JWT_SECRET).toString(),
     }],
 },{
     _id: userTwoId,
