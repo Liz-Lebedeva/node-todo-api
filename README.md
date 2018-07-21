@@ -1,109 +1,100 @@
 # To Do Application
 
-This is an educational project I did for a [The Complete Node.js Developer Course (2nd Edition)](https://www.udemy.com/the-complete-nodejs-developer-course-2/learn/v4/overview)  
-It is a REST API that allows registered users with an account to create and maintain their To Do lists.
+This is an educational project I did for a [The Complete Node.js Developer Course (2nd Edition)](https://www.udemy.com/the-complete-nodejs-developer-course-2/learn/v4/overview). It is a REST API that allows users to register an account to create and maintain their To Do lists.
 
 ## Endpoints
 
 ### /users
 
-**Allowed HTTPs requests:**  
+**Allowed HTTPs requests:**
+
 **POST** - Creates a new user, assigns authentication token  
 
-**Usual Server Responses:**  
+*Usual Server Responses:*  
 200 - `OK` - the request was successful  
 400 - `Bad Request` - the request could not be understood or was missing required parameters  
 
-**Sample request:**  
-body:  
-```
+*Sample request:*
+<pre>body (JSON):
 {
-  "email" : "test.user.two@gmail.com",
-  "password" : "123456"
-}
-```
+    "email" : "test.user.two@gmail.com",
+    "password" : "123456"
+}</pre>
 
-**Sample response:**  
-headers:  
-```
+*Sample response:*
+<pre>status: 200
+
+headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
 }
-```
-body (JSON):  
-```
+
+body (JSON): 
 {
     "_id": "5b53733bc9998216cabc2bce",
     "email": "test.user.two@gmail.com"
-}
-```
-
+}</pre>
 
 ### /users/login
 
-**Allowed HTTPs requests:**  
+**Allowed HTTPs requests:**
+
 **POST** - Logs in an existing user, assigns new authentication token  
 
-**Usual Server Responses:**  
+*Usual Server Responses:*  
 200 - `OK` - the request was successful  
 400 - `Bad Request` - the request could not be understood or was missing required parameters  
 
-**Sample request:**  
-body:  
-```
+*Sample request:*
+<pre>body (JSON):
 {
   "email" : "test.user.two@gmail.com",
   "password" : "123456"
-}
-```
+}</pre>
 
-**Sample response:**  
-headers:  
-```
+*Sample response:*
+<pre>status: 200
+
+headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
 }
-```
-body (JSON):  
-status: 200  
-```
+
+body (JSON):
 {
     "_id": "5b53733bc9998216cabc2bce",
     "email": "test.user.two@gmail.com"
-}
-```
+}</pre>
 
 ### /users/me
 
-**Allowed HTTPs requests:**  
+**Allowed HTTPs requests:**
+
 **GET** - Returns user's ID and email, if authentication token is valid  
 
-**Usual Server Responses:**  
+*Usual Server Responses:*  
 400 `Bad Request` - the request could not be understood or was missing required parameters  
 401 `Unauthorized` - authentication failed  
 
-**Sample request:**  
-headers:  
-```
+*Sample request:*
+<pre>headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
-}
-```
+}</pre>
 
-**Sample response:**  
-status: 200  
-body:  
-```
+*Sample response:*
+<pre>status: 200
+
+body (JSON):
 {
     "_id": "5b53733bc9998216cabc2bce",
     "email": "test.user.two@gmail.com"
-}
-```
-
+}</pre>
 
 ### /users/me/token
 
-**Allowed HTTPs requests:**  
+**Allowed HTTPs requests:**
+
 **DELETE** - Logs the user out, deleting authentication token  
 
 *Usual Server Responses:*  
@@ -111,46 +102,41 @@ body:
 400 `Bad Request` - the request could not be understood or was missing required parameters  
 401 `Unauthorized` - authentication failed  
 
-**Sample request:**  
-headers:  
-```
+*Sample request:*
+<pre>headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
-}
-```
+}</pre>
 
-**Sample response:**  
-status: 200  
-
+*Sample response:*
+<pre>status: 200</pre>
 
 ### /todos
 
-**Allowed HTTPs requests:**  
+**Allowed HTTPs requests:**
+
 **POST** - Adds a new To Do record associated with the user  
 
-**Usual Server Responses:**  
+*Usual Server Responses:*  
 200 `OK` - the request was successful  
 400 `Bad Request` - the request could not be understood or was missing required parameters  
 401 `Unauthorized` - authentication failed  
 
-**Sample request:**  
-headers:  
-```
+*Sample request:*
+<pre>headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
 }
-```
-body:  
-```
+
+body (JSON):
 {
   "text" : "Buy milk, bread and cherries"
-}
-```
+}</pre>
 
-**Sample response:**  
-status: 200  
-body:  
-```
+*Sample response:*
+<pre>status: 200
+
+body (JSON):
 {
     "todo": {
         "completed": false,
@@ -160,28 +146,25 @@ body:
         "_creator": "5b53733bc9998216cabc2bce",
         "__v": 0
     }
-}
-```
+}</pre>
 
 **GET** - Returns all To Do records associated with the user
 
-**Usual Server Responses:**  
+*Usual Server Responses:*  
 200 `OK` - the request was successful  
 400 `Bad Request` - the request could not be understood or was missing required parameters  
 401 `Unauthorized` - authentication failed  
 
-**Sample request:**  
-headers:  
-```
+*Sample request:*
+<pre>headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
-}
-```
+}</pre>
 
-**Sample response:**  
-status: 200  
-body:  
-```
+*Sample response:*
+<pre>status: 200
+
+body (JSON):
 {
     "todos": [
         {
@@ -201,34 +184,31 @@ body:
             "__v": 0
         },
     ]
-}
-```
-
+}</pre>
 
 ### /todos/:id
 
-**Allowed HTTPs requests:**  
+**Allowed HTTPs requests:**
+
 **GET** - Returns one To Do by its ID  
 
-**Usual Server Responses:**  
+*Usual Server Responses:*  
 200 `OK` - the request was successful  
 400 `Bad Request` - the request could not be understood or was missing required parameters  
 401 `Unauthorized` - authentication failed  
 404 `Not Found` - resource was not found  
 
-**Sample request:**  
-parameters: record id (MongoDB _id, required)  
-headers:  
-```
+*Sample request:*
+<pre>parameters: record id (MongoDB _id, required)  
+headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
-}
-```
+}</pre>
 
-**Sample response:**  
-status: 200  
-body:  
-```
+*Sample response:*
+<pre>status: 200
+
+body (JSON):
 {
     "todo": {
         "completed": true,
@@ -238,37 +218,33 @@ body:
         "_creator": "5b5372e1c9998216cabc2bc6",
         "__v": 0
     }
-}
-```
+}</pre>
 
 **PATCH** - Modifies one To Do by its ID. Can be used to change text or set To Do as completed (if set completed, adds a time stamp; is completed set to false, removes time stamp if it exists)
 
-**Usual Server Responses:**  
+*Usual Server Responses:*  
 200 `OK` - the request was successful  
 400 `Bad Request` - the request could not be understood or was missing required parameters  
 401 `Unauthorized` - authentication failed  
 404 `Not Found` - resource was not found  
 
-**Sample request:**  
-parameters: record id (MongoDB _id, required)  
-headers:  
-```
+*Sample request:*
+<pre>parameters: record id (MongoDB _id, required)
+headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
 }
-```
-body:  
-```
+
+body (JSON):
 {
 	"text": "oups!",
 	"completed": true
-}
-```
+}</pre>
 
-**Sample response:**  
-status: 200  
-body:  
-```
+*Sample response:*
+<pre>status: 200
+
+body (JSON):
 {
     "todo": {
         "completed": true,
@@ -278,8 +254,7 @@ body:
         "_creator": "5b5372e1c9998216cabc2bc6",
         "__v": 0
     }
-}
-```
+}</pre>
 
 **DELETE** - Deletes one To Do by its ID. Returns deleted To Do record.  
 
@@ -289,19 +264,17 @@ body:
 401 `Unauthorized` - authentication failed  
 404 `Not Found` - resource was not found  
 
-**Sample request:**  
-parameters: record id (MongoDB _id, required)  
-headers:  
-```
+*Sample request:*
+<pre>parameters: record id (MongoDB _id, required)
+headers:
 {
     'x-auth': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1YjUzNzMzYmM5OTk4MjE2Y2FiYzJiY2UiLCJhY2Nlc3MiOiJhdXRoIiwiaWF0IjoxNTMyMTk2NTA3fQ.YjLnPu2UDajhVAX47X4DsLAMG0Dojt7HpDoSiThTwlM'
-}
-```
+}</pre>
 
-**Sample response:**  
-status: 200  
-body:  
-```
+*Sample response:*
+<pre>status: 200
+
+body (JSON):
 {
     "todo": {
         "completed": true,
@@ -311,8 +284,7 @@ body:
         "_creator": "5b5372e1c9998216cabc2bc6",
         "__v": 0
     }
-}
-```
+}</pre>
 
 ## Deployment notes
 To Do Application is currently deployed on Heroku [here](https://invulnerable-fromage-32368.herokuapp.com/) so you could try it.  
@@ -323,20 +295,18 @@ To Do Application is currently deployed on Heroku [here](https://invulnerable-fr
 
 If you want to clone this repo and run it on your local machine you need to add a JSON configuration file in Server folder, specifying PORT (number), MONGODB_URI(MongoDB connection URI) and JWT_SECRET(String) environment variables for 'test' and 'development' environments
 Example:  
-```
-{
-  "development": {
-    "PORT": 3000,
-    "MONGODB_URI": "mongodb://<dbuser>:<dbpassword>@ds125381.mlab.com:25441/todos",
-    "JWT_SECRET": "kslP79qcvy7phg54w"
-  },
-  "test": {
-    "PORT": 3000,
-    "MONGODB_URI": "mongodb://<dbuser>:<dbpassword>@ds125381.mlab.com:28981/test-todos",
-    "JWT_SECRET": "gksldjl8899sklkld"
-  }
-}
-```
+<pre>{
+    "development": {
+        "PORT": 3000,
+        "MONGODB_URI": "mongodb://<dbuser>:<dbpassword>@ds125381.mlab.com:25441/todos",
+        "JWT_SECRET": "kslP79qcvy7phg54w"
+    },
+    "test": {
+        "PORT": 3000,
+        "MONGODB_URI": "mongodb://<dbuser>:<dbpassword>@ds125381.mlab.com:28981/test-todos",
+        "JWT_SECRET": "gksldjl8899sklkld"
+    }
+}</pre>
 
 ## Running the tests
 
